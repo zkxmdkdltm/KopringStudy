@@ -1,8 +1,10 @@
 package com.example.banking.domain.user
 
 import com.example.banking.domain.account.Account
-import com.example.banking.support.BaseTimeEntity
-import jakarta.persistence.*
+import com.example.banking.support.BaseRootEntity
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
 
 @Entity
 class User(
@@ -10,36 +12,30 @@ class User(
     val userInfo: UserInfo,
 
     @OneToMany(mappedBy = "user")
-    val accounts: MutableList<Account> = mutableListOf()
+    val accounts: MutableList<Account> = mutableListOf(),
 
-) : BaseTimeEntity() {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    val id: Long = 0
-    override fun toString(): String {
-        return "User(userInfo=$userInfo, id=$id)"
-    }
+    id: Long = 0L
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+) : BaseRootEntity<User>(id) {
+    val name: String
+        get() = userInfo.name
+    val city: String
+        get() = userInfo.address.city
+    val street: String
+        get() = userInfo.address.street
+    val zipcode: String
+        get() = userInfo.address.zipcode
 
-        other as User
-
-        if (userInfo != other.userInfo) return false
-        if (accounts != other.accounts) return false
-        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = userInfo.hashCode()
-        result = 31 * result + accounts.hashCode()
-        result = 31 * result + id.hashCode()
-        return result
-    }
+    constructor(
+        name: String,
+        city: String,
+        street: String,
+        zipcode: String,
+        accounts: MutableList<Account>,
+        id: Long = 0L,
+    ) : this(
+        UserInfo(name, Address(city, street, zipcode)), accounts, id
+    )
 
 
 }

@@ -1,14 +1,12 @@
 package com.example.banking.domain.transaction
 
-import com.example.banking.support.BaseTimeEntity
-import jakarta.persistence.*
+import com.example.banking.support.BaseEntity
+import jakarta.persistence.Entity
 
 @Entity
 class Transaction(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id")
-    val id: Long = 0,
     val type: TransactionType,
     val amount: Double,
-) : BaseTimeEntity() {
+    id: Long = 0
+) : BaseEntity(id) {
 }
